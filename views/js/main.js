@@ -360,7 +360,6 @@ var makeRandomPizza = function() {
 
 // returns a DOM element for each pizza
 var pizzaElementGenerator = function(i) {
-  var pizzaContainer = document.createElement("div");
   var id = 'pizza ' + i;
   var ingridients = makeRandomPizza();
 var pizzan = randomName();
@@ -376,9 +375,8 @@ var pizzan = randomName();
             </div>
           </div>
   `;
-  pizzaContainer.innerHTML = content;
 
-  return pizzaContainer;
+  return content;
 };
 
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
@@ -405,9 +403,9 @@ var resizePizzas = function(size) {
   changeSliderLabel(size);
 
    // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  function determineDx (elem, size) {
+  function determineDx (elem, size, randomPizzas) {
     var oldWidth = elem.offsetWidth;
-    var windowWidth = document.querySelector("#randomPizzas").offsetWidth;
+    var windowWidth =randomPizzas.offsetWidth;
     var oldSize = oldWidth / windowWidth;
 
     // Changes the slider value to a percent width
@@ -431,10 +429,12 @@ var resizePizzas = function(size) {
   }
 
   // Iterates through pizza elements on the page and changes their widths
-  var randpizcont = document.querySelectorAll(".randomPizzaContainer"); 
+  
   function changePizzaSizes(size) {
+    var randpizcont = document.querySelectorAll(".randomPizzaContainer"); 
+    var randomPizzas= document.querySelector("#randomPizzas")
     for (var i = 0; i < randpizcont.length; i++) {
-      var dx = determineDx(randpizcont[i], size);
+      var dx = determineDx(randpizcont[i], size, randomPizzas);
       var newwidth = (randpizcont[i].offsetWidth + dx) + 'px';
       randpizcont[i].style.width = newwidth;
     }
@@ -452,11 +452,12 @@ var resizePizzas = function(size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
+var randomPizzasContent = "";
+var pizzasDiv = document.getElementById("randomPizzas");
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
-  pizzasDiv.appendChild(pizzaElementGenerator(i));
+  randomPizzasContent += pizzaElementGenerator(i);
 }
-
+pizzasDiv.innerHTML = randomPizzasContent;
 // User Timing API again. These measurements tell you how long it took to generate the initial pizzas
 window.performance.mark("mark_end_generating");
 window.performance.measure("measure_pizza_generation", "mark_start_generating", "mark_end_generating");
